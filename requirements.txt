@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+google-cloud-bigquery
+google-cloud-aiplatform
+python-dotenv
+asyncio
+vertexai
+aiofiles

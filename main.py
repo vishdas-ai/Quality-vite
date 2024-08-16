@@ -12,6 +12,9 @@ from dotenv import load_dotenv
 import re
 from itertools import groupby
 from operator import itemgetter
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 
 # Load environment variables
 load_dotenv()
@@ -451,6 +454,44 @@ async def api_more_information(request: MoreInfoRequest):
     except Exception as e:
         logger.error(f"Error getting more information: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+# Function to safely serve files
+def safe_file_response(file_path: str):
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
+
+# Mount the static directory
+app.mount("/static", StaticFiles(directory="dist/static"), name="static")
+
+# Serve specific files from the root of dist
+@app.get("/Ford_logo_flat.png")
+async def serve_ford_logo():
+    return safe_file_response("dist/Ford_logo_flat.png")
+
+@app.get("/gemini-logo.png")
+async def serve_gemini_logo():
+    return safe_file_response("dist/gemini-logo.png")
+
+@app.get("/google-cloud-logo.svg")
+async def serve_google_cloud_logo():
+    return safe_file_response("dist/google-cloud-logo.svg")
+
+@app.get("/vite.svg")
+async def serve_vite_svg():
+    return safe_file_response("dist/vite.svg")
+
+# Serve index.html for the root path and any other unmatched route (for SPA routing)
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    if os.path.isfile(f"dist/{full_path}"):
+        return FileResponse(f"dist/{full_path}")
+    index_path = "dist/index.html"
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
 
 if __name__ == "__main__":
     import uvicorn

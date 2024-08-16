@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send } from 'lucide-react';
 
-const API_URL = 'http://localhost:8000'; // Update this if your API URL is different
+const API_URL = ''; // Update this if your API URL is different
 
 const HighlightNumbers = ({ children }) => {
   if (typeof children !== 'string') {
