@@ -7,3 +7,4 @@ python-dotenv
 asyncio
 vertexai
 aiofiles
+python-multipart
